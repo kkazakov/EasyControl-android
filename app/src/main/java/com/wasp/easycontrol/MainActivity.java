@@ -38,6 +38,42 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+    private void toggle(boolean turnOn) {
+        buttonMain.setText("Loading ...");
+
+        String url = myPrefs.url().getOr("");
+
+        if (!url.equals("")) {
+            url = "http://" + url + "/control?cmd=event,Turn" + (turnOn ? "On" : "Off");
+        }
+
+        if (url.equals("")) {
+            buttonMain.setText("Check settings");
+            return;
+        }
+
+        Ion.with(this)
+                .load(url)
+                .asString()
+                .setCallback(new FutureCallback<String>() {
+                    @Override
+                    public void onCompleted(Exception e, String result) {
+                        // do stuff with the result or error
+
+                        if (e != null || result == null) {
+                            buttonMain.setText("Error");
+                            state = -1;
+                        } else {
+
+                            System.out.println(result);
+
+                            updateStatus();
+                        }
+                    }
+                });
+
+    }
+
     private void updateStatus() {
 
         buttonMain.setText("Loading ...");
@@ -46,6 +82,11 @@ public class MainActivity extends AppCompatActivity {
 
         if (!url.equals("")) {
             url = "http://" + url + "/control?cmd=status,gpio,12";
+        }
+
+        if (url.equals("")) {
+            buttonMain.setText("Check settings");
+            return;
         }
 
         Ion.with(this)
@@ -76,7 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
     @Click(R.id.buttonMain)
     void pressed() {
-        System.out.println("pressed");
+        toggle((state == 0));
     }
 
     @Click(R.id.buttonSettings)
