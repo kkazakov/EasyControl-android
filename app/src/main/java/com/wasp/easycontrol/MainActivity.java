@@ -1,5 +1,6 @@
 package com.wasp.easycontrol;
 
+import android.os.Handler;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Button;
 
@@ -67,7 +68,14 @@ public class MainActivity extends AppCompatActivity {
 
                             System.out.println(result);
 
-                            updateStatus();
+                            final Handler handler = new Handler();
+                            handler.postDelayed(new Runnable() {
+                                @Override
+                                public void run() {
+                                    updateStatus();
+                                }
+                            }, 500);
+
                         }
                     }
                 });
